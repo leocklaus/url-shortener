@@ -4,6 +4,7 @@ import io.github.leocklaus.url_sortener.api.dto.URLInputDTO;
 import io.github.leocklaus.url_sortener.api.dto.URLOutputDTO;
 import io.github.leocklaus.url_sortener.domain.entity.ShortenedURL;
 import io.github.leocklaus.url_sortener.domain.entity.User;
+import io.github.leocklaus.url_sortener.domain.exception.NotAuthorizedException;
 import io.github.leocklaus.url_sortener.domain.exception.URLNotFoundException;
 import io.github.leocklaus.url_sortener.domain.repository.URLRepository;
 import io.github.leocklaus.url_sortener.domain.repository.UserRepository;
@@ -27,6 +28,11 @@ public class URLService {
         var shortenedURL = createShortenedURL(dto.originalURL());
 
         var user = userService.getUserByUUIDOrThrowsExceptionIfNotExists(dto.userId());
+        var loggedUser = userService.getLoggedUserOrThrowsExceptionIfNotExists();
+
+        if(user != loggedUser){
+            throw new NotAuthorizedException();
+        }
 
         var entity = ShortenedURL.builder()
                 .shortenedURL(shortenedURL)
