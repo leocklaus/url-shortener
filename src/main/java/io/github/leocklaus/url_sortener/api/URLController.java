@@ -5,6 +5,8 @@ import io.github.leocklaus.url_sortener.api.dto.URLInputDTO;
 import io.github.leocklaus.url_sortener.api.dto.URLOutputDTO;
 import io.github.leocklaus.url_sortener.domain.service.StatsService;
 import io.github.leocklaus.url_sortener.domain.service.URLService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -23,7 +25,7 @@ public class URLController {
 
 
     @PostMapping("/shorten-url")
-    public ResponseEntity<URLOutputDTO> shortenURL(@RequestBody URLInputDTO dto){
+    public ResponseEntity<URLOutputDTO> shortenURL(@RequestBody @Valid URLInputDTO dto){
         URLOutputDTO shortenedURL = urlService.shortenURL(dto);
         URI uri = URI.create("/");
         return ResponseEntity.created(uri).body(shortenedURL);
