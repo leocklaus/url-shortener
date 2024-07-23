@@ -2,6 +2,7 @@ package io.github.leocklaus.url_sortener.domain.service;
 
 import io.github.leocklaus.url_sortener.api.dto.UserInputDTO;
 import io.github.leocklaus.url_sortener.domain.entity.User;
+import io.github.leocklaus.url_sortener.domain.exception.UserEmailAlreadyTakenException;
 import io.github.leocklaus.url_sortener.domain.exception.UserNotFoundException;
 import io.github.leocklaus.url_sortener.domain.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -29,6 +30,10 @@ public class UserService {
 
     @Transactional
     public User addNewUser(UserInputDTO dto) {
+
+        if(userRepository.existsByEmail(dto.email())){
+            throw new UserEmailAlreadyTakenException(dto.email());
+        }
 
         User user = User.builder()
                 .name(dto.name())
