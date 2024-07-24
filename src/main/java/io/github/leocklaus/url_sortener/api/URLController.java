@@ -27,7 +27,7 @@ public class URLController {
     @PostMapping("/shorten-url")
     public ResponseEntity<URLOutputDTO> shortenURL(@RequestBody @Valid URLInputDTO dto){
         URLOutputDTO shortenedURL = urlService.shortenURL(dto);
-        URI uri = URI.create("/");
+        URI uri = URI.create("/" + shortenedURL.shortenedURL());
         return ResponseEntity.created(uri).body(shortenedURL);
     }
 

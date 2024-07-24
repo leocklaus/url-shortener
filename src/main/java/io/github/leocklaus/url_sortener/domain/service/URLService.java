@@ -55,7 +55,7 @@ public class URLService {
         return url.getOriginalURL();
     }
 
-    private String createShortenedURL(String originalURL) {
+    public String createShortenedURL(String originalURL) {
 
         String url;
 
