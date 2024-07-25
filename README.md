@@ -15,7 +15,7 @@ This project aims to build an API where users can input some URL, for example "h
 * Logged users can submit a URL and receive as response a shorter one
 * New URL must be persisted along with the original one
 * The new URL should redirect to the original URL
-* Every time a user accesses de shorter URL, a view count is added
+* Every time a user accesses a shorter URL, a view count is added
 * User can check how many access his URL has
 * User can manage the URLs he owns, including deleting it
 
