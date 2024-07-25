@@ -56,7 +56,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(URLNotFoundException.class)
-    public ResponseEntity<?> handleThoughtNotFoundException(URLNotFoundException ex, WebRequest request){
+    public ResponseEntity<?> handleURLNotFoundException(URLNotFoundException ex, WebRequest request){
         var status = HttpStatus.NOT_FOUND;
         var exceptionType = ExceptionType.URL_NOT_FOUND;
         String detail = ex.getMessage();
