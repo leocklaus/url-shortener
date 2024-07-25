@@ -2,8 +2,10 @@ package io.github.leocklaus.url_sortener.domain.service;
 
 import io.github.leocklaus.url_sortener.builders.ShortenedURLBuilder;
 import io.github.leocklaus.url_sortener.builders.StatsBuilder;
+import io.github.leocklaus.url_sortener.builders.UserBuilder;
 import io.github.leocklaus.url_sortener.domain.entity.ShortenedURL;
 import io.github.leocklaus.url_sortener.domain.entity.Stats;
+import io.github.leocklaus.url_sortener.domain.exception.NotAuthorizedException;
 import io.github.leocklaus.url_sortener.domain.exception.URLNotFoundException;
 import io.github.leocklaus.url_sortener.domain.repository.StatsRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -28,6 +30,9 @@ class StatsServiceTest {
 
     @Mock
     URLService urlService;
+
+    @Mock
+    UserService userService;
 
     @Captor
     ArgumentCaptor<Stats> statsArgumentCaptor;
@@ -102,16 +107,49 @@ class StatsServiceTest {
         }
 
         @Test
+        @DisplayName("Should Throw Exception if logged user is not the same as URL Owner")
+        void shouldThrowExceptionIfLoggedUserIsNotURLOwner() {
+
+            String url = "http://www.google.com";
+
+            var loggedUser = new UserBuilder()
+                    .build();
+
+            var urlOwner = new UserBuilder()
+                    .build();
+
+            var shortURL = new ShortenedURLBuilder()
+                    .withUser(urlOwner)
+                    .build();
+
+            doReturn(loggedUser).when(userService).getLoggedUserOrThrowsExceptionIfNotExists();
+            doReturn(shortURL).when(urlService).findByShortenURLOrThrowsExceptionIfNotExists(any());
+
+            assertThrows(NotAuthorizedException.class, ()->{
+                statsService.getTotalViewsByURL(url);
+            });
+
+
+        }
+
+        @Test
         @DisplayName("Should return total views by URL")
         void shouldReturnTotalViewsByURL(){
 
             String url = "http://www.google.com";
+
+            var user = new UserBuilder()
+                    .build();
+
             var shortenedURL = new ShortenedURLBuilder()
                     .withShortenedURL(url)
+                    .withUser(user)
                     .build();
 
             doReturn(shortenedURL).when(urlService)
                     .findByShortenURLOrThrowsExceptionIfNotExists(urlStringCaptor.capture());
+
+            doReturn(user).when(userService).getLoggedUserOrThrowsExceptionIfNotExists();
 
             doReturn(2L).when(statsRepository)
                     .countByUrlID(shortenedURLArgumentCaptor.capture());
