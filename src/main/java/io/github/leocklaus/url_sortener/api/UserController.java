@@ -15,12 +15,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
 
-@Controller
+@RestController
 @RequestMapping("/auth")
-public class UserController {
+public class UserController implements IUserController {
 
     private final UserService userService;
     private final TokenService tokenService;
@@ -32,6 +33,7 @@ public class UserController {
         this.authenticationManager = authenticationManager;
     }
 
+    @Override
     @PostMapping
     public ResponseEntity<UserOutputDTO> addUser(@RequestBody @Valid UserInputDTO dto){
 
@@ -43,6 +45,7 @@ public class UserController {
         return ResponseEntity.created(uri).body(new UserOutputDTO(user.getId(), token));
     }
 
+    @Override
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(@RequestBody @Valid AuthDTO authDTO){
         var usernamePassword = new UsernamePasswordAuthenticationToken(authDTO.login(), authDTO.password());

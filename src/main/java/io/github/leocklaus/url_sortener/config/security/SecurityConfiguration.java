@@ -27,6 +27,14 @@ public class SecurityConfiguration {
         this.securityFilter = securityFilter;
     }
 
+    private static final String[] AUTH_WHITE_LIST = {
+            "/v3/api-docs/**",
+            "/swagger-ui/**",
+            "/v2/api-docs/**",
+            "/swagger-resources/**",
+            "/swagger-ui.html"
+    };
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
@@ -34,8 +42,9 @@ public class SecurityConfiguration {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize ->
                         authorize
-                                .requestMatchers(HttpMethod.POST, "/auth").permitAll()
-                                .anyRequest().authenticated()
+                                .requestMatchers("/shorten-url").authenticated()
+                                .requestMatchers("/stats/**").authenticated()
+                                .anyRequest().permitAll()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
